@@ -1,4 +1,5 @@
 const AUTH_STORAGE_KEY = "sigma_dashboard_auth";
+const DEPLOYED_BACKEND_URL = "https://zerodha-clone-by-arpit.onrender.com";
 
 const getRuntimeOrigin = (port) => {
   const protocol = window.location.protocol || "http:";
@@ -6,7 +7,8 @@ const getRuntimeOrigin = (port) => {
   return `${protocol}//${host}:${port}`;
 };
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || getRuntimeOrigin(3535);
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || DEPLOYED_BACKEND_URL;
 const FRONTEND_URL =
   import.meta.env.VITE_FRONTEND_LOGIN_URL || `${getRuntimeOrigin(5173)}/logout`;
 
