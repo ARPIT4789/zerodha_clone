@@ -12,19 +12,31 @@ const watchModel = require("./Models/watchModel");
 const orderModel = require("./Models/orderModel");
 const userModel = require("./Models/userModel");
 
-app.use(cors());
-app.use(express.json());
+const allowedOrigins = [
+  process.env.CORS_ORIGIN,
+  process.env.FRONTEND_URL,
+  process.env.DASHBOARD_URL,
+]
+  .filter(Boolean)
+  .flatMap((value) => String(value).split(","))
+  .map((value) => value.trim())
+  .filter(Boolean);
 
-main()
-  .then(() => {
-    console.log("connected to DB");
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) {
+        return callback(null, true);
+      }
+      if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("CORS not allowed"));
+    },
+    credentials: true,
   })
-  .catch((err) => {
-    console.log(err);
-  });
-async function main() {
-  await mongoose.connect(URL);
-}
+);
+app.use(express.json());
 
 const getPasswordHash = (password) => {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -80,6 +92,10 @@ const authMiddleware = async (req, res, next) => {
 
 app.get("/", (req, res) => {
   res.send("server is working");
+});
+
+app.get("/health", (req, res) => {
+  res.json({ ok: true, service: "backend" });
 });
 
 app.post("/auth/signup", async (req, res) => {
@@ -201,6 +217,21 @@ app.get("/allOrder", authMiddleware, async (req, res) => {
   res.json(allOrder);
 });
 
-app.listen(PORT, () => {
-  console.log(`server is running at port ${PORT}`);
+const startServer = async () => {
+  if (!URL) {
+    console.error("MONGO_URL is missing in environment variables.");
+    process.exit(1);
+  }
+
+  await mongoose.connect(URL);
+  console.log("connected to DB");
+
+  app.listen(PORT, () => {
+    console.log(`server is running at port ${PORT}`);
+  });
+};
+
+startServer().catch((err) => {
+  console.error("Server startup failed:", err.message);
+  process.exit(1);
 });
