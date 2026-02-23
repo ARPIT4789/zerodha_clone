@@ -1,18 +1,16 @@
 const AUTH_STORAGE_KEY = "sigma_user_auth";
+const DEPLOYED_BACKEND_URL = "https://zerodha-clone-by-arpit.onrender.com";
+const DEPLOYED_DASHBOARD_URL = "https://zerodha-dashboard-by-arpit.onrender.com";
 
-const getRuntimeOrigin = (port) => {
-  const protocol = window.location.protocol || "http:";
-  const host = window.location.hostname || "localhost";
-  return `${protocol}//${host}:${port}`;
-};
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || getRuntimeOrigin(3535);
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || DEPLOYED_BACKEND_URL;
 const DASHBOARD_URL =
-  import.meta.env.VITE_DASHBOARD_URL || getRuntimeOrigin(5174);
+  import.meta.env.VITE_DASHBOARD_URL || DEPLOYED_DASHBOARD_URL;
 
 export const getBackendUrl = () => BACKEND_URL;
 
 export const getDashboardUrl = () => DASHBOARD_URL;
+export const hasDashboardUrl = () => Boolean(DASHBOARD_URL);
 
 export const getAuth = () => {
   const raw = localStorage.getItem(AUTH_STORAGE_KEY);
