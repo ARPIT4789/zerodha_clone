@@ -8,7 +8,8 @@ export default function DashboardRedirect() {
     if (!dashboardConfigured) return;
 
     const token = getAuthToken();
-    const dashboardUrl = `${getDashboardUrl()}/dashboard${
+    const baseDashboardUrl = getDashboardUrl().replace(/\/+$/, "");
+    const dashboardUrl = `${baseDashboardUrl}/${
       token ? `?token=${encodeURIComponent(token)}` : ""
     }`;
     window.location.href = dashboardUrl;
